@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+</body>
+<div class="container">
+  <div class="title">
+    登 陆
+  </div>
+  <div class="mgb12">
+    <label>用户名</label>
+    <input type="text" id="username" autocomplete="off">
+  </div>
+  <div class="mgb12">
+    <label>密码</label>
+    <input type="text" id="password">
+  </div>
+  <button id="login_btn" class="mgb12">登录</button>
+  <button id="registry_btn">注册</button>
+  <div class="info mgb12">
+    <label>当前登陆的用户：</label>
+    <span id="loginUsernName"></span>
+  </div>
+  <div class="users">
+    <div class="title">所有注册用户</div>
+    <div id="userList"></div>
+  </div>
+</div>
+<script>
+  const loginBtn = document.getElementById('login_btn')
+  const registryBtn = document.getElementById('registry_btn')
+
+  function getBody() {
+    const username = document.getElementById('username').value
+    const password = document.getElementById('password').value
+    return { username, password }
+  }
+
+  function fetchData(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": 'application/json;charset=UTF-8'
+      },
+      body: JSON.stringify(body)
+    })
+  }
+
+  async function fetchUser() {
+    const response = await fetch('http://localhost:3000/users')
+    const data = await response.json()
+    const userList = document.getElementById('userList')
+    userList.innerHTML = data.users.map(item => `<div>${item}</div>`).join('')
+  }
+  fetchUser()
+
+  loginBtn.addEventListener('click', async () => {
+    const body = getBody()
+    const response = await fetchData('http://localhost:3000/login', body)
+    const data = await response.json()
+    const loginUsernName = document.getElementById('loginUsernName')
+    loginUsernName.innerText = data.username
+  })
+
+  registryBtn.addEventListener('click', async () => {
+    const body = getBody()
+    const response = fetchData('http://localhost:3000/registry', body)
+    const data = await response.json()
+  })
+</script>
+
+</html>

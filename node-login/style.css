@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  background-color: #033959;
+  color: #fff;
+}
+
+input {
+  height: 16px;
+  border-radius: 8px;
+  border: 1px solid #777;
+  width: 200px;
+  padding: 8px;
+}
+
+label {
+  width: 70px;
+  display: inline-block;
+}
+
+button {
+  width: 140px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #4888ee;
+  background-color: #4888ee;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #225fc1;
+}
+
+.mgb12 {
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+#login_btn {
+  margin-right: 10px;
+}
+
+.info label {
+  width: 140px;
+  color: #53b4ec;
+}
+
+#userList div {
+  border: 1px solid #c4c4c4;
+  text-align: center;
+  height: 24px;
+}
