@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./assets/element.css" />
+  <script src="./assets//vue.global.js"></script>
+  <script src="./assets/element.js"></script>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div id="app">
+    <h2 class="mgb24">信息录入</h2>
+    <el-form :inline="true" :model="userForm">
+      <el-form-item label="name">
+        <el-input v-model="userForm.name" />
+      </el-form-item>
+      <el-form-item label="age">
+        <el-input v-model="userForm.age" />
+      </el-form-item>
+      <el-form-item label="sex">
+        <el-radio-group v-model="userForm.sex">
+          <el-radio label="male">male</el-radio>
+          <el-radio label="female">female</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleUserAdd">add</el-button>
+        <el-button type="primary" @click="handleUserUpdate">update</el-button>
+      </el-form-item>
+    </el-form>
+    <h2 class="mgb24">信息展示</h2>
+    <el-form :inline="true" :model="searchForm">
+      <el-form-item label="name">
+        <el-input v-model="searchForm.name" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleSearch">search</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table :data="tableData" class="mgb24">
+      <el-table-column prop="name" label="name"></el-table-column>
+      <el-table-column prop="age" label="age"></el-table-column>
+      <el-table-column prop="sex" label="sex"></el-table-column>
+      <el-table-column label="operation">
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.row)">edit</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)">delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination class="pagination" v-model:current-page="current" background layout="prev, pager, next"
+      :total="total" @current-change="handleCurrentChange" />
+  </div>
+</body>
+<script>
+  const App = {
+    data() {
+      return {
+        userForm: {
+          name: '',
+          sex: '',
+          age: '',
+          id: ''
+        },
+        searchForm: {
+          name: ''
+        },
+        tableData: [],
+        current: 1,
+        total: 0
+      }
+    },
+    async mounted() {
+      this.fetchList()
+    },
+    methods: {
+      async fetchList() {
+        const { name } = this.searchForm
+        const response = await fetch(`http://localhost:3000/users?name=${name}&current=${this.current}`)
+        const data = await response.json()
+        this.tableData = data.users
+        this.total = data.total
+      },
+      async handleUserAdd() {
+        await fetch('http://localhost:3000/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(this.userForm)
+        })
+        this.fetchList()
+      },
+      async handleUserUpdate() {
+        await fetch(`http://localhost:3000/users/${this.userForm.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(this.userForm)
+        })
+        this.fetchList()
+      },
+      handleSearch() {
+        this.fetchList()
+      },
+      async handleEdit(row) {
+        this.userForm = { ...row }
+      },
+      async handleDelete(row) {
+        await fetch(`http://localhost:3000/users/${row.id}`, {
+          method: 'DELETE',
+        })
+        this.fetchList()
+      },
+      handleCurrentChange(val) {
+        this.current = val
+        this.fetchList()
+      }
+    }
+  }
+  const app = Vue.createApp(App)
+  app.use(ElementPlus)
+  app.mount('#app')
+</script>
+
+</html>
